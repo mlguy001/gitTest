@@ -1,3 +1,7 @@
 Tracking file create before forking out
 Some Forkout edits here (Adding ForkoutAddon and delete fbranch3)
-Diverging, conflictually, from Conflict here
+#< head
+Diverging, conflictually, from Conflict here (keep with an edit)
+#= were here
+Change from Conflict branch (also keep with another edit)
+#> conf
