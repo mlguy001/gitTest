@@ -1,0 +1,103 @@
+
+Sub arr()
+    Dim a(1 To 5, 2) As Variant
+    Dim a2 As Variant
+    Dim i, j As Integer
+    Dim avg As Variant, trsp As Variant
+    For i = LBound(a, 1) To UBound(a, 1)
+        For j = LBound(a, 2) To UBound(a, 2)
+            a(i, j) = i + j
+        Next
+    Next
+    'a(1, 1) = ""
+    MsgBox Join2D(a)
+    avg = GetColumnAverage(a)
+    MsgBox Join(avg, " ")
+    trsp = TransposeTable(a)
+    MsgBox Join2D(trsp)
+End Sub
+
+Function GetColumnAverage(a As Variant) As Variant
+    Dim nRows, nCols, i, j As Long
+    Dim averages As Variant
+    
+    On Error GoTo exceptionHandler
+    
+    nRows = UBound(a, 1) - LBound(a, 1) + 1
+    ReDim averages(LBound(a, 2) To UBound(a, 2))
+    
+    'Calcul des sommes marginales
+    For j = LBound(a, 2) To UBound(a, 2)
+        For i = LBound(a, 1) To UBound(a, 1)
+            averages(j) = averages(j) + a(i, j)
+        Next
+    Next
+    
+    'Normalisation par le nombre de lignes, en supposant que les zéros soients des données valides
+    For j = LBound(a, 2) To UBound(a, 2)
+        averages(j) = averages(j) / nRows
+    Next
+    
+    GetColumnAverage = averages
+
+exceptionHandler:
+If Err.Number <> 0 Then
+    If IsArray(a) Then
+        MsgBox "Pendant le calcul des moyennes, l'erreur suivante est survenue: " & Err.Description
+    Else
+        MsgBox "Veuillez vérifier que le paramètre passé à la fonction GetColumnAverage soit un tableau"
+    End If
+End If
+    
+End Function
+
+Function TransposeTable(a As Variant) As Variant
+    Dim nRows, nCols, i, j As Long
+    Dim transpose As Variant
+    
+    On Error GoTo exceptionHandler
+    
+    ReDim transpose(LBound(a, 2) To UBound(a, 2), LBound(a, 1) To UBound(a, 1))
+    
+    'Echange des lignes et colonnes
+    For i = LBound(a, 2) To UBound(a, 2)
+        For j = LBound(a, 1) To UBound(a, 1)
+            transpose(i, j) = a(j, i)
+        Next
+    Next
+    
+    TransposeTable = transpose
+
+exceptionHandler:
+If Err.Number <> 0 Then
+    If IsArray(a) Then
+        MsgBox "Pendant la transposition, l'erreur suivante est survenue: " & Err.Description
+    Else
+        MsgBox "Veuillez vérifier que le paramètre passé à la fonction TransposeTable soit un tableau"
+    End If
+End If
+    
+End Function
+
+
+Public Function Join2D(ByVal vArray As Variant, Optional ByVal sWordDelim As String = " ", Optional ByVal sLineDelim As String = vbNewLine) As String
+    
+    Dim i As Long, j As Long
+    Dim aReturn() As String
+    Dim aLine() As String
+    
+    ReDim aReturn(LBound(vArray, 1) To UBound(vArray, 1))
+    ReDim aLine(LBound(vArray, 2) To UBound(vArray, 2))
+    
+    For i = LBound(vArray, 1) To UBound(vArray, 1)
+        For j = LBound(vArray, 2) To UBound(vArray, 2)
+            'Put the current line into a 1d array
+            aLine(j) = vArray(i, j)
+        Next j
+        'Join the current line into a 1d array
+        aReturn(i) = Join(aLine, sWordDelim)
+    Next i
+    
+    Join2D = Join(aReturn, sLineDelim)
+    
+End Function
