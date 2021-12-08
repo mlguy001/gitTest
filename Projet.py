@@ -5,7 +5,28 @@ from sklearn import model_selection
 # %%
 df = pd.read_csv("corporate_rating.csv")
 # %%
+df["Sector"].value_counts()
+# %%
+key={'D':0,'C':1,'CC':2,'CCC':3,'B':4,'BB':5,'BBB':6,'A':7,'AA':8,'AAA':9}
+# %%
+df["Rating"].sort_values(key=lambda x:x.map(key)).hist()
+# %%
 df["RatingScore"] = df["Rating"].apply(lambda x:key[x])
+# %%
+sectors = df["Sector"].unique()
+for sector in sectors:
+    freq = df[df["Sector"]==sector]["Rating"].value_counts().max()
+    rating = df[df["Sector"]==sector]["Rating"].value_counts().idxmax()
+    print(sector, rating, freq)
+# %%
+col = "returnOnCapitalEmployed"
+col = "debtRatio"
+# %%
+cutoffSup = df[col].quantile(0.99)
+cutoffInf = df[col].quantile(0.01)
+d = df[(cutoffInf<=df[col]) & (df[col]<=cutoffSup)]
+d = d[["RatingScore", col]]
+d.plot.scatter(x=col, y="RatingScore")
 # %%
 NumericVariables = ['currentRatio', 'quickRatio', 'cashRatio', 'daysOfSalesOutstanding',
        'netProfitMargin', 'pretaxProfitMargin', 'grossProfitMargin',
